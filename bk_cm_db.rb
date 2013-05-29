@@ -4,27 +4,44 @@
 
 require "./lib/parseconfig.rb"
 
-config=ParseConfig.new('./conf/datasources.cf')
+MYSQLDUMP = "/home/coremail/mysql/bin/mysqldump"
+BACKUP_DIR = "/home/cmbackup"
 
-databases ={
-
-    :cm_client => {
-    :database => config['cm_logs_db']['Server'],
-    :username => config['cm_logs_db']['User'],
-    :password => config['cm_logs_db']['Password'],
-}
-}
-
-end_of_iter = ARGV.shift
-
-databases.each do |name,config|
-    if end_of_iter.nil?
-        backup_file = config[:database] + '_' + Time.now.strftime('%Y%m%d')
-    else
-        backup_file = config[:database] + '_' + end_of_iter
+def main()
+    begin
+        #if(File.exist?(BACKUP_DIR))
+        #    Dir.chdir(BACKUP_DIR)
+        #else
+        #    Dir.mkdir(BACKUP_DIR)
+        #    Dir.chdir(BACKUP_DIR)
+        #end
+	Dir.mkdir(BACKUP_DIR) && Dir.chdir(BACKUP_DIR) unless File.exists?(BACKUP_DIR) 
+        backup_databases
     end
-    mysqldump = "/home/coremail/mysql/bin/mysqldump -u#{config[:username]} -p#{config[:password]} " + "#{config[:database]}"
-    `#{mysqldump} > #{backup_file}.sql`
-    `gzip #{backup_file}.sql`
+end
+
+def backup_databases()
+	config = ParseConfig.new('/home/coremail/conf/datasources.cf')
+	databases ={
+    	   :cm_client => {
+    	   :server => config['cm_logs_db']['Server'],
+           :username => config['cm_logs_db']['User'],
+           :password => config['cm_logs_db']['Password'],
+ 		}
+	}	
+    end_of_iter = ARGV.shift
+    databases.each do |name,config|
+        if end_of_iter.nil?
+            backup_file = config[:server] + '_' + Time.now.strftime('%Y%m%d')
+        else
+            backup_file = config[:server] + '_' + end_of_iter
+        end
+        `#{MYSQLDUMP} -h#{config[:server]} -u#{config[:username]} -p#{config[:password]} --all-databases --routines -q --single-transaction  > #{backup_file}.sql`
+        `gzip #{backup_file}.sql`
+    end
+end
+
+if __FILE__ == $0
+   main
 end
 
