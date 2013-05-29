@@ -15,7 +15,7 @@ def main()
         #    Dir.mkdir(BACKUP_DIR)
         #    Dir.chdir(BACKUP_DIR)
         #end
-	Dir.mkdir(BACKUP_DIR) && Dir.chdir(BACKUP_DIR) unless File.exists?(BACKUP_DIR) 
+	Dir.mkdir(BACKUP_DIR) and Dir.chdir(BACKUP_DIR) unless File.exists?(BACKUP_DIR) 
         backup_databases
     end
 end
