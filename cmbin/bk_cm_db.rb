@@ -2,7 +2,7 @@
 # Author : danielfeng
 # E-Mail : danielfancy@gmail.com
 
-require "./lib/parseconfig.rb"
+require "../lib/parseconfig.rb"
 
 MYSQLDUMP = "/home/coremail/mysql/bin/mysqldump"
 BACKUP_DIR = "/home/cmbackup"
