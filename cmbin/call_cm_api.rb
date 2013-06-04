@@ -1,3 +1,7 @@
+#!/usr/bin/env ruby
+# Author : danielfeng
+# E-Mail : danielfancy@gmail.com
+
 require 'socket'
 include Socket::Constants
 
