@@ -5,9 +5,10 @@
 
 files_hash = Hash.new
 Dir.glob("**/*.*") do |file_name|
+  
   assess_time = File.new(file_name).mtime
   unless file_name == '.' || file_name == '..' then
-    files_hash[file_name] = assess_time
+    files_hash[file_name] = assess_time if File.size(file_name) > 100000000
   end
 end
 
